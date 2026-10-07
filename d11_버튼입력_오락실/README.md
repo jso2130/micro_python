@@ -8,6 +8,7 @@
 | `b2_button_led.py` | 누르는 동안 플래시가 켜진다 | 누른다 |
 | `b2b_sleep_misses_button.py` | sleep 으로 자는 동안 짧은 누름을 놓치는 것을 체험 | 짧게 10번 눌러 화면 횟수와 비교 |
 | `b3_button_toggle_timer.py` | 인터럽트 구조 위에서 10ms 마다 버튼 확인, 눌린 순간 플래시 토글 | 누를 때마다 토글 |
+| `b4_button_debounce.py` | (심화·선택) 채터링을 거르는 디바운스. `DEBOUNCE_MS = 70` 을 바꿔 본다 | 열 번 눌러 인정된 횟수 확인 |
 | `g1_flashlight.py` | 스마트 손전등: 꺼짐→약→중→강→꺼짐 | 누를 때마다 한 단계 |
 | `g2_dimmer_breath.py` | 디머와 호흡등 | 짧게 = 켜짐/꺼짐, 길게 = 밝기 조절 |
 | `g3_reaction_game.py` | 반응속도 게임 | 안내에 따라 누르기 |
