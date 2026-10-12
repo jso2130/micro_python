@@ -149,7 +149,6 @@ def task_100ms():
     elif state == FAIL:                            # 밝은 불: 길게 한 번 · 짧게 세 번 · 계속
         on = FAIL_PATTERN[blink_cnt % len(FAIL_PATTERN)]
         flash.duty(FAIL_DUTY if on else 0)
-        red.value(0 if on else 1)
         blink_cnt += 1                             # 버튼을 누를 때까지 계속 반복
 
 tmr = Timer(0)
