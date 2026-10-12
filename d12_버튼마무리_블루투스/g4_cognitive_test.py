@@ -7,7 +7,7 @@ flash = PWM(Pin(4), freq=1000, duty=0)          # 플래시 (직시 금지)
 red = Pin(33, Pin.OUT, value=1)                 # 0 이 켜짐
 
 GO_DUTY = 600            # "지금!" 신호의 밝기
-PASS_DUTY = 150          # 통과: 어두운 불로 깜빡
+PASS_DUTY = 80           # 통과: 어두운 불로 깜빡
 FAIL_DUTY = 600          # 실패: 밝은 불로 깜빡
 PRESS_LOCK_MS = 100      # 버튼을 누른 뒤 이 시간 동안은 또 눌린 것으로 치지 않는다 (떨림 방지)
 MIN_WAIT = 1000          # 랜덤 대기 최소(ms)
