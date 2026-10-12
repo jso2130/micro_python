@@ -6,25 +6,30 @@ btn = Pin(0, Pin.IN, Pin.PULL_UP)               # 누르면 0
 flash = PWM(Pin(4), freq=1000, duty=0)          # 플래시 (직시 금지)
 red = Pin(33, Pin.OUT, value=1)                 # 0 이 켜짐
 
-GO_DUTY = 600            # "지금!" 신호의 밝기
-PASS_DUTY = 80           # 통과: 어두운 불로 깜빡
-FAIL_DUTY = 600          # 실패: 밝은 불로 깜빡
-PRESS_LOCK_MS = 100      # 버튼을 누른 뒤 이 시간 동안은 또 눌린 것으로 치지 않는다 (떨림 방지)
+# ───── ★ 고쳐 쓰는 값: 이 칸의 숫자만 바꾸면 된다 ─────
+LIMIT_MS = 500           # 이 시간(0.5초) 안에 눌러야 통과
+GO_DUTY = 600            # "지금!" 신호의 밝기 (0~1023)
+PASS_DUTY = 80           # 통과 때 불의 밝기: 어둡게
+FAIL_DUTY = 600          # 실패 때 불의 밝기: 밝게
+
+# 깜빡임 모양: 한 칸 = 100ms, 1 = 켜짐, 0 = 꺼짐. 끝까지 읽으면 처음으로 돌아가 계속 반복
+PASS_PATTERN = [1, 1, 0, 0,   1, 1, 0, 0,   0, 0, 0, 0]                       # 두 번 깜빡 · 쉬고
+FAIL_PATTERN = [1, 1, 1, 1, 1, 1,   0, 0,   1, 0, 1, 0, 1, 0,   0, 0, 0, 0]   # 길게 한 번 · 짧게 세 번 · 쉬고
+
 MIN_WAIT = 1000          # 랜덤 대기 최소(ms)
 MAX_WAIT = 4000          # 랜덤 대기 최대(ms)
-LIMIT_MS = 500           # 이 시간(0.5초) 안에 눌러야 통과
+# ───── 여기까지 ─────
+
+PRESS_LOCK_MS = 100      # 버튼을 누른 뒤 이 시간 동안은 또 눌린 것으로 치지 않는다 (떨림 방지)
 BEST_FILE = "best.txt"           # 통과한 것 중 가장 빠른 기록 (플래시 메모리)
 LOG_FILE = "cog_log.txt"         # 검사 결과를 한 줄씩 쌓는 파일 (통과 ms, 실패 -1)
 
 IDLE = 0      # 키 입력 대기: 버튼을 누르면 검사 시작
 READY = 1     # 준비: 빨간 LED 켜짐, 랜덤 시간 기다리는 중
-GO = 2        # 플래시 켜짐: 0.5초 안에 누르기
+GO = 2        # 플래시 켜짐: LIMIT_MS 안에 누르기
 FOUL = 3      # 반칙: 빨간 LED 빠르게 깜빡
-PASS = 4      # 통과: 어두운 플래시가 두 번 깜빡 · 쉬고 · 반복 (버튼을 누를 때까지)
-FAIL = 5      # 실패: 밝은 플래시가 길게 한 번, 짧게 세 번을 계속 반복 (버튼을 누를 때까지)
-
-PASS_PATTERN = [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0]               # 100ms 칸마다 1=켜짐 0=꺼짐 (두 번 깜빡, 쉬고)
-FAIL_PATTERN = [1] * 6 + [0] * 2 + [1, 0, 1, 0, 1, 0] + [0] * 4   # 길게 1번, 짧게 3번, 쉬고 반복
+PASS = 4      # 통과: PASS_PATTERN 대로 PASS_DUTY 로 계속 깜빡 (버튼을 누를 때까지)
+FAIL = 5      # 실패: FAIL_PATTERN 대로 FAIL_DUTY 로 계속 깜빡 (버튼을 누를 때까지)
 
 state = IDLE
 wait_ms = 0
@@ -73,7 +78,7 @@ def start_round():
     t0 = time.ticks_ms()
     red.value(0)                                   # 준비 신호
     state = READY
-    print("준비... 플래시가 켜지면 0.5초 안에 누르세요!")
+    print("준비... 플래시가 켜지면", LIMIT_MS, "ms 안에 누르세요!")
 
 def finish_pass(rt):
     global state, best, blink_cnt
@@ -89,7 +94,7 @@ def finish_pass(rt):
 
 def finish_fail():
     global state, blink_cnt
-    print("실패! 0.5초 안에 못 눌렀어요")
+    print("실패!", LIMIT_MS, "ms 안에 못 눌렀어요")
     log_result(-1)                                 # 실패는 -1 로 적는다
     flash.duty(0)
     blink_cnt = 0
