@@ -7,6 +7,9 @@ flash = PWM(Pin(4), freq=1000, duty=0)          # 플래시 (직시 금지)
 red = Pin(33, Pin.OUT, value=1)                 # 0 이 켜짐
 
 GO_DUTY = 600            # "지금!" 신호의 밝기
+PASS_DUTY = 150          # 통과: 어두운 불로 깜빡
+FAIL_DUTY = 600          # 실패: 밝은 불로 깜빡
+PRESS_LOCK_MS = 100      # 버튼을 누른 뒤 이 시간 동안은 또 눌린 것으로 치지 않는다 (떨림 방지)
 MIN_WAIT = 1000          # 랜덤 대기 최소(ms)
 MAX_WAIT = 4000          # 랜덤 대기 최대(ms)
 LIMIT_MS = 500           # 이 시간(0.5초) 안에 눌러야 통과
@@ -17,8 +20,11 @@ IDLE = 0      # 키 입력 대기: 버튼을 누르면 검사 시작
 READY = 1     # 준비: 빨간 LED 켜짐, 랜덤 시간 기다리는 중
 GO = 2        # 플래시 켜짐: 0.5초 안에 누르기
 FOUL = 3      # 반칙: 빨간 LED 빠르게 깜빡
-PASS = 4      # 통과: 플래시 두 번 깜빡
-FAIL = 5      # 실패: 빨간 LED 와 플래시가 함께 깜빡
+PASS = 4      # 통과: 어두운 플래시가 두 번 깜빡, 끝나면 대기
+FAIL = 5      # 실패: 밝은 플래시가 길게 한 번, 짧게 세 번을 계속 반복 (버튼을 누를 때까지)
+
+PASS_PATTERN = [1, 1, 0, 0, 1, 1, 0, 0]                          # 100ms 칸마다 1=켜짐 0=꺼짐
+FAIL_PATTERN = [1] * 6 + [0] * 2 + [1, 0, 1, 0, 1, 0] + [0] * 4   # 길게 1번, 짧게 3번, 쉬고 반복
 
 state = IDLE
 wait_ms = 0
@@ -26,6 +32,7 @@ t0 = 0                   # 상태가 시작된 시각
 best = None              # 통과 기록 중 가장 빠른 것(ms)
 blink_cnt = 0            # 깜빡임 단계 세기
 foul_cnt = 0             # 반칙 깜빡임 횟수
+last_press = 0           # 마지막으로 인정한 버튼 누름 시각
 btn_last = 1
 
 flag_10ms = False
@@ -90,7 +97,9 @@ def finish_fail():
 
 def on_press():
     global state, foul_cnt
-    if state == IDLE:
+    if state == IDLE or state == PASS or state == FAIL:   # 대기·통과·실패 어디서든 누르면 새로 도전
+        flash.duty(0)
+        red.value(1)
         start_round()
     elif state == READY:                           # 너무 일찍 눌렀다
         flash.duty(0)
@@ -105,10 +114,12 @@ def on_press():
             finish_fail()
 
 def task_10ms():
-    global state, t0, btn_last
+    global state, t0, btn_last, last_press
     now = btn.value()
     if btn_last == 1 and now == 0:
-        on_press()
+        if time.ticks_diff(time.ticks_ms(), last_press) >= PRESS_LOCK_MS:
+            last_press = time.ticks_ms()
+            on_press()
     btn_last = now
 
     if state == READY and time.ticks_diff(time.ticks_ms(), t0) >= wait_ms:
@@ -128,23 +139,18 @@ def task_100ms():
             red.value(1)
             state = IDLE
             print("다시 하려면 버튼을 누르세요")
-    elif state == PASS:                            # 플래시 두 번: 켬 끔 켬 끔
-        flash.duty(GO_DUTY if blink_cnt % 2 == 0 else 0)
+    elif state == PASS:                            # 어두운 불로 두 번 깜빡
+        flash.duty(PASS_DUTY if PASS_PATTERN[blink_cnt] else 0)
         blink_cnt += 1
-        if blink_cnt >= 4:
+        if blink_cnt >= len(PASS_PATTERN):
             flash.duty(0)
             state = IDLE                           # 다시 키 입력 대기
             print("다시 하려면 버튼을 누르세요")
-    elif state == FAIL:                            # 빨강과 플래시가 함께 깜빡
-        on = blink_cnt % 2 == 0
+    elif state == FAIL:                            # 밝은 불: 길게 한 번 · 짧게 세 번 · 계속
+        on = FAIL_PATTERN[blink_cnt % len(FAIL_PATTERN)]
+        flash.duty(FAIL_DUTY if on else 0)
         red.value(0 if on else 1)
-        flash.duty(GO_DUTY if on else 0)
-        blink_cnt += 1
-        if blink_cnt >= 10:
-            red.value(1)
-            flash.duty(0)
-            state = IDLE                           # 다시 키 입력 대기
-            print("다시 하려면 버튼을 누르세요")
+        blink_cnt += 1                             # 버튼을 누를 때까지 계속 반복
 
 tmr = Timer(0)
 tmr.init(period=1, mode=Timer.PERIODIC, callback=timer_isr)
@@ -166,4 +172,4 @@ except KeyboardInterrupt:
     red.value(1)
     print("정지. 최고 기록:", best)
 
-# ⭐ 도전: LIMIT_MS 를 300 으로 줄여 보자. 실패 횟수가 세 번이 되면 '검사 종료' 로 만들어 보자.
+# ⭐ 도전: LIMIT_MS 를 300 으로 줄여 보자. 실패 횟수가 세 번이 되면 검사 종료로 만들어 보자.
