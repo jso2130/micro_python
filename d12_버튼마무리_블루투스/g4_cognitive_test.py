@@ -20,10 +20,10 @@ IDLE = 0      # 키 입력 대기: 버튼을 누르면 검사 시작
 READY = 1     # 준비: 빨간 LED 켜짐, 랜덤 시간 기다리는 중
 GO = 2        # 플래시 켜짐: 0.5초 안에 누르기
 FOUL = 3      # 반칙: 빨간 LED 빠르게 깜빡
-PASS = 4      # 통과: 어두운 플래시가 두 번 깜빡, 끝나면 대기
+PASS = 4      # 통과: 어두운 플래시가 두 번 깜빡 · 쉬고 · 반복 (버튼을 누를 때까지)
 FAIL = 5      # 실패: 밝은 플래시가 길게 한 번, 짧게 세 번을 계속 반복 (버튼을 누를 때까지)
 
-PASS_PATTERN = [1, 1, 0, 0, 1, 1, 0, 0]                          # 100ms 칸마다 1=켜짐 0=꺼짐
+PASS_PATTERN = [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0]               # 100ms 칸마다 1=켜짐 0=꺼짐 (두 번 깜빡, 쉬고)
 FAIL_PATTERN = [1] * 6 + [0] * 2 + [1, 0, 1, 0, 1, 0] + [0] * 4   # 길게 1번, 짧게 3번, 쉬고 반복
 
 state = IDLE
@@ -139,13 +139,10 @@ def task_100ms():
             red.value(1)
             state = IDLE
             print("다시 하려면 버튼을 누르세요")
-    elif state == PASS:                            # 어두운 불로 두 번 깜빡
-        flash.duty(PASS_DUTY if PASS_PATTERN[blink_cnt] else 0)
-        blink_cnt += 1
-        if blink_cnt >= len(PASS_PATTERN):
-            flash.duty(0)
-            state = IDLE                           # 다시 키 입력 대기
-            print("다시 하려면 버튼을 누르세요")
+    elif state == PASS:                            # 어두운 불: 두 번 깜빡 · 쉬고 · 계속
+        on = PASS_PATTERN[blink_cnt % len(PASS_PATTERN)]
+        flash.duty(PASS_DUTY if on else 0)
+        blink_cnt += 1                             # 버튼을 누를 때까지 계속 반복
     elif state == FAIL:                            # 밝은 불: 길게 한 번 · 짧게 세 번 · 계속
         on = FAIL_PATTERN[blink_cnt % len(FAIL_PATTERN)]
         flash.duty(FAIL_DUTY if on else 0)
