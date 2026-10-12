@@ -15,6 +15,7 @@
 | `g4_cognitive_test.py` | **인지능력 검사기** — 플래시가 켜진 뒤 0.5초 안에 누르면 통과(어두운 불이 두 번 깜빡·쉬고를 계속 반복), 못 누르면 실패(밝은 불이 길게 한 번·짧게 세 번을 계속 반복). 어느 쪽이든 버튼을 누르면 새 도전. 기록을 보드 플래시 메모리 파일(`best.txt`·`cog_log.txt`)에 쓴다 | 안내에 따라 누르기. `main.py` 로 저장하면 컴퓨터 없이 동작 |
 | `g4_show_records.py` | 보드에 쌓인 검사 기록을 읽어 보여 준다 | 보드를 PC 에 연결한 뒤 실행 |
 | `g4_reset_records.py` | 저장된 기록을 모두 지운다 | 실행 |
+| `보드_main_지우기.py` | **구조용** — `main.py` 때문에 Thonny 가 연결을 못 할 때(Device is busy 반복) `main.py` 를 지운다 | Thonny 오른쪽 아래를 **Local Python 3** 로 바꾼 뒤 ▶ 실행, 끝나면 **MicroPython (ESP32)** 로 되돌린다 |
 | `e1_ble_advertise.py` | 보드가 자기 이름을 알린다 (Advertising, 이름 알리기) | 폰 앱 Scanner 목록에서 내 이름 찾기 |
 | `e2_ble_button_notify.py` | 연결한 폰으로 버튼 눌림을 알린다 (TX 알림) | 앱에서 TX 알림을 켜고 IO0 누르기 |
 | `e3_ble_flash_control.py` | 폰이 RX 에 `1` / `0` 을 써서 플래시를 켜고 끈다 | 앱에서 RX 에 글자 쓰기 |
@@ -27,6 +28,9 @@
 ## 컴퓨터 없이 돌리기 (g4)
 - Thonny 에서 `g4_cognitive_test.py` 를 연 채 파일 → 다른 이름으로 저장 → **MicroPython device** 를 고르고 이름을 `main.py` 로 한다. 전원이 들어오면 `main.py` 가 저절로 실행된다.
 - 다시 시작하려면 보드 오른쪽 **RESET 키**를 누른다(IO0 는 누르지 않는다). 수업이 끝나면 보드의 `main.py` 를 삭제한다.
+
+## 연결이 안 될 때 (main.py 가 돌고 있을 때)
+- 쉘에 `Device is busy` 가 반복되고 정지(■)·다시 연결로도 안 풀리면 `보드_main_지우기.py` 를 쓴다: ① Thonny 오른쪽 아래 → **Local Python 3** ② 이 파일을 열어 ▶ 실행(쉘에 '지운 뒤 파일' 목록에서 main.py 가 사라진다) ③ 오른쪽 아래 → **MicroPython (ESP32)** ④ `>>>` 가 뜨면 성공.
 
 ## 주의
 - **플래시를 눈으로 직접 보지 말 것**(매우 밝다). 책상이나 벽을 비추게 놓는다.
