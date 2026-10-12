@@ -1,7 +1,7 @@
 import bluetooth, time
 from machine import Pin, Timer
 
-NAME = "CAM-00"                                 # ★ 내 번호로 바꾼다
+NAME = "CAM-DW502-이름"                         # ★ 내 이름으로 바꾼다 (예: CAM-DW502-홍길동, 한글 5글자까지)
 btn = Pin(0, Pin.IN, Pin.PULL_UP)               # 누르면 0
 red = Pin(33, Pin.OUT, value=1)                 # 빨간 LED: 0 이 켜짐
 
@@ -36,7 +36,7 @@ def ble_irq(event, data):                       # 폰이 연결되거나 끊길 
     elif event == 2:                            # 2 = 연결이 끊김
         conn = None
         red.value(1)
-        print("끊김 → 다시 광고")
+        print("끊김 → 다시 이름 알리기")
         advertise()
 
 ble.irq(ble_irq)
@@ -63,7 +63,7 @@ def task_10ms():
 tmr = Timer(0)
 tmr.init(period=1, mode=Timer.PERIODIC, callback=timer_isr)
 advertise()
-print("광고 중:", NAME)
+print("이름 알리는 중:", NAME)
 
 try:
     while True:

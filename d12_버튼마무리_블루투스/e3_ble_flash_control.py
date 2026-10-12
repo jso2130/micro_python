@@ -1,7 +1,7 @@
 import bluetooth, time
 from machine import Pin, PWM, Timer
 
-NAME = "CAM-00"                                 # ★ 내 번호로 바꾼다
+NAME = "CAM-DW502-이름"                         # ★ 내 이름으로 바꾼다 (예: CAM-DW502-홍길동, 한글 5글자까지)
 btn = Pin(0, Pin.IN, Pin.PULL_UP)               # 누르면 0
 flash = PWM(Pin(4), freq=1000, duty=0)          # 플래시 밝기 0~1023 (직시 금지)
 red = Pin(33, Pin.OUT, value=1)                 # 빨간 LED: 0 이 켜짐
@@ -38,7 +38,7 @@ def ble_irq(event, data):
         print("연결됨")
     elif event == 2:                            # 연결이 끊김
         conn = None
-        print("끊김 → 다시 광고")
+        print("끊김 → 다시 이름 알리기")
         advertise()
     elif event == 3:                            # 3 = 폰이 RX 에 글자를 써 넣음
         command = ble.gatts_read(rx_handle).decode().strip()   # 읽어서 포스트잇에 적어 둔다
@@ -80,7 +80,7 @@ def task_10ms():
 tmr = Timer(0)
 tmr.init(period=1, mode=Timer.PERIODIC, callback=timer_isr)
 advertise()
-print("광고 중:", NAME)
+print("이름 알리는 중:", NAME)
 
 try:
     while True:

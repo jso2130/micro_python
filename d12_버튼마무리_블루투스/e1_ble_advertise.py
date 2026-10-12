@@ -1,7 +1,7 @@
 import bluetooth, time
 from machine import Pin
 
-NAME = "CAM-00"                                 # ★ 내 번호로 바꾼다 (예: CAM-07)
+NAME = "CAM-DW502-이름"                         # ★ 내 이름으로 바꾼다 (예: CAM-DW502-홍길동, 한글 5글자까지)
 red = Pin(33, Pin.OUT, value=1)                 # 빨간 LED: 0 이 켜짐
 
 def make_payload(name):
@@ -13,14 +13,14 @@ def make_payload(name):
 ble = bluetooth.BLE()
 ble.active(True)                                # 블루투스 안테나를 켠다
 ble.gap_advertise(100_000, adv_data=make_payload(NAME))   # 0.1초(100000us)마다 "나 여기 있어요"
-red.value(0)                                    # 광고 중에는 빨간 LED 를 켜 둔다
-print("광고 중:", NAME)
+red.value(0)                                    # 이름 알리는 중에는 빨간 LED 를 켜 둔다
+print("이름 알리는 중:", NAME)
 
 try:
     while True:
         time.sleep_ms(500)
 except KeyboardInterrupt:
-    ble.gap_advertise(None)                     # 광고를 멈춘다
+    ble.gap_advertise(None)                     # 이름 알리기를 멈춘다
     ble.active(False)
     red.value(1)
     print("정지")
