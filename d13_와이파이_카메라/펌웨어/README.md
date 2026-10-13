@@ -8,3 +8,4 @@
 - 원래(일반) 펌웨어로 되돌리려면 `펌웨어_원복.bat` 더블클릭. 올라가는 파일은 `esp32_generic_mpy1.29.0.bin` (MicroPython 공식 `ESP32_GENERIC-20260824-v1.29.0.bin`, 1,790,544 바이트, 주소 0x1000).
 - 원복 실측(2026-10-11, 맥북 + ESP32-CAM-MB): 같은 esptool 명령(`--erase-all -z 0x1000`, 460800 baud)으로 지우기 13.3초 → 쓰기 32.5초 → `Hash of data verified.` → 부팅 줄 `MicroPython v1.29.0 ... Generic ESP32 module with ESP32`(SPIRAM 없음), `import camera` 는 `ImportError`.
 - `펌웨어_원복.bat` 은 윈도우 PC 에서 아직 실행해 보지 않았다(굽기 bat 와 파일 이름·문구만 다르다).
+- **맥북**: 같은 폴더의 `펌웨어_굽기.command` / `펌웨어_원복.command` 를 Finder 에서 더블클릭한다(Thonny 의 파이썬·esptool 5.2.0 사용, 포트 자동 탐지). 실측(2026-10-13, 맥북 + ESP32-CAM-MB): 굽기 지우기 13.2초 → 쓰기 30.4초 → `Hash of data verified.`, 원복 13.2초 → 33.0초 → 검증, 원복 뒤 `import camera` 는 `ImportError`. 처음 열 때 "확인되지 않은 개발자" 경고가 뜨면 오른쪽 버튼 → 열기(다른 맥에서는 미확인). 실행 권한이 없으면 터미널에서 `chmod +x 펌웨어_*.command`.
