@@ -5,7 +5,9 @@ SSID = "여기에_와이파이_이름"                   # ★ 화면에 안내�
 PASSWORD = "여기에_비밀번호"                    # ★ 화면에 안내된 비밀번호로 바꾼다
 
 wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
+wlan.active(False)                              # 앞 실행에서 남은 접속 시도를 지우려고
+time.sleep_ms(1000)                             # 껐다가 1초 쉬고
+wlan.active(True)                               # 다시 켠다
 wlan.connect(SSID, PASSWORD)
 while not wlan.isconnected():
     time.sleep_ms(300)

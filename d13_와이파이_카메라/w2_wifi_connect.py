@@ -7,7 +7,9 @@ PASSWORD = "여기에_비밀번호"                    # ★ 화면에 안내된
 red = Pin(33, Pin.OUT, value=1)                 # 빨간 LED: 0 이 켜짐
 
 wlan = network.WLAN(network.STA_IF)
-wlan.active(True)
+wlan.active(False)                              # 앞 실행에서 남은 접속 시도를 지우려고
+time.sleep_ms(1000)                             # 껐다가 1초 쉬고
+wlan.active(True)                               # 다시 켠다
 wlan.connect(SSID, PASSWORD)                    # 공유기에 접속을 요청한다
 
 print("연결 중", end="")
