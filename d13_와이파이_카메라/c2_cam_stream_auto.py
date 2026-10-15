@@ -6,8 +6,8 @@ machine.freq(240000000)                         # 보드 두뇌(CPU) 속도를 �
 SSID = "여기에_와이파이_이름"                   # ★ 화면에 안내된 와이파이 이름으로 바꾼다
 PASSWORD = "여기에_비밀번호"                    # ★ 화면에 안내된 비밀번호로 바꾼다
 
-SIZE = FrameSize.QVGA                           # 화면 크기: QQVGA(작다) < QVGA < VGA < XGA(크다)  → 이 한 줄만 바꾸면 된다 (XGA 는 OV2640 에서만 확인, 느림)
-QUALITY = 60                                    # 화질 0~100 (높을수록 선명하고 느리다. 95 까지 확인, 98 이상은 안 켜질 수 있다)
+SIZE = FrameSize.QVGA                           # 크기: QQVGA < QVGA < VGA < XGA (XGA 는 OV2640 만, 느림)
+QUALITY = 60                                    # 화질 0~100 (높을수록 선명하고 느림, 95 까지)
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(False)                              # 앞 실행에서 남은 접속 시도를 지우려고
@@ -20,7 +20,7 @@ ip = wlan.ifconfig()[0]
 
 
 def open_camera(pixel_format, frame_size, xclk_mhz):
-    # xclk_freq : 카메라 시계. 색 데이터(큰 덩어리)를 보낼 때는 10MHz 로 천천히 돌려야 와이파이가 안 느려진다.
+    # xclk_freq : 카메라 박자(MHz). 색 데이터는 10 으로 느리게
     for _ in range(3):                          # 카메라가 가끔 한 번에 안 켜져서 3번까지 다시 해 본다
         try:
             return Camera(pixel_format=pixel_format, frame_size=frame_size,
@@ -38,19 +38,19 @@ time.sleep_ms(300)
 
 # 2) 센서에 맞는 방식으로 다시 켠다
 if SENSOR == "OV2640":
-    # OV2640 은 센서가 JPEG 를 직접 만들어 준다 → 보드가 할 일이 없어 빠르다
-    cam = open_camera(PixelFormat.JPEG, SIZE, 24)       # JPEG 는 덩어리가 작아 24MHz 로 빠르게 (20MHz 는 와이파이가 느려졌다)
+    # OV2640 은 센서가 JPEG 를 직접 만든다 (빠르다)
+    cam = open_camera(PixelFormat.JPEG, SIZE, 24)       # 24MHz (20 은 와이파이가 느려졌다)
     encoder = None
 else:
-    # OV3660 등은 JPEG 를 못 만든다 → 색 데이터(RGB565)로 찍고 보드가 JPEG 로 줄인다 (VGA 는 아주 느리다)
+    # OV3660 등은 색 데이터(RGB565)로 찍고 보드가 JPEG 로 줄인다
     cam = open_camera(PixelFormat.RGB565, SIZE, 10)
     encoder = jpeg.Encoder(width=cam.get_pixel_width(), height=cam.get_pixel_height(),
                            pixel_format="RGB565_BE", quality=QUALITY)
 if SENSOR == "OV2640":
-    cam.set_vflip(True)                         # OV2640 보드는 카메라가 거꾸로 달려 있어서 위아래를 뒤집는다 (OV3660 은 바로 달려 있다)
+    cam.set_vflip(True)                         # 이 보드는 카메라가 거꾸로 달려 있어 뒤집는다
 if SENSOR == "OV3660":
-    cam.set_wb_mode(3)                          # 흰색이 분홍·보라로 기우는 것을 줄이려고 화이트밸런스를 '사무실'(3)로 맞춘다 (502호 조명에서 확인 필요)
-    for _ in range(5):                          # 설정이 화면에 반영되도록 몇 장 찍고 버린다
+    cam.set_wb_mode(3)                          # 화이트밸런스 '사무실'(3): 흰색이 분홍으로 기우는 것을 줄임
+    for _ in range(5):                          # 설정이 반영되도록 몇 장 버린다
         cam.capture()
 cam.capture()                                   # 첫 장은 밝기가 덜 맞아서 버린다
 print("센서:", SENSOR, "→", "센서 JPEG 직접" if encoder is None else "RGB565 + 보드에서 JPEG 압축",
