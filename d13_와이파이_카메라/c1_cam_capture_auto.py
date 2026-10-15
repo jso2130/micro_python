@@ -46,7 +46,8 @@ else:
     cam = open_camera(PixelFormat.RGB565, SIZE, 10)
     encoder = jpeg.Encoder(width=cam.get_pixel_width(), height=cam.get_pixel_height(),
                            pixel_format="RGB565_BE", quality=QUALITY)
-cam.set_vflip(True)                             # 이 보드의 카메라는 거꾸로 달려 있어서 위아래를 뒤집는다
+if SENSOR == "OV2640":
+    cam.set_vflip(True)                         # OV2640 보드는 카메라가 거꾸로 달려 있어서 위아래를 뒤집는다 (OV3660 은 바로 달려 있다)
 cam.capture()                                   # 첫 장은 밝기가 덜 맞아서 버린다
 print("센서:", SENSOR, "→", "센서 JPEG 직접" if encoder is None else "RGB565 + 보드에서 JPEG 압축",
       "/ 화면 크기:", cam.get_pixel_width(), "x", cam.get_pixel_height())
