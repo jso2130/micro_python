@@ -6,7 +6,7 @@ machine.freq(240000000)                         # 보드 두뇌(CPU) 속도를 �
 SSID = "여기에_와이파이_이름"                   # ★ 화면에 안내된 와이파이 이름으로 바꾼다
 PASSWORD = "여기에_비밀번호"                    # ★ 화면에 안내된 비밀번호로 바꾼다
 
-SIZE = FrameSize.QVGA                           # 화면 크기: QQVGA(작다) < QVGA < VGA(크다)  → 이 한 줄만 바꾸면 된다
+SIZE = FrameSize.QVGA                           # 화면 크기: QQVGA(작다) < QVGA < VGA < XGA(크다)  → 이 한 줄만 바꾸면 된다 (XGA 는 OV2640 에서만 확인, 느림)
 QUALITY = 85                                    # 화질 (높을수록 선명하고 파일이 크다)
 
 wlan = network.WLAN(network.STA_IF)
@@ -85,4 +85,4 @@ finally:
     cam.deinit()
     print("정지")
 
-# ⭐ 도전: QUALITY 를 30 으로 바꾸거나 SIZE 를 FrameSize.VGA 로 바꿔 사진이 어떻게 달라지는지 비교해 보자.
+# ⭐ 도전: QUALITY 를 30 으로 바꾸거나 SIZE 를 FrameSize.VGA 나 FrameSize.XGA 로 바꿔 사진이 어떻게 달라지는지 비교해 보자.
