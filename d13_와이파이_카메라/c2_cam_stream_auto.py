@@ -7,7 +7,7 @@ SSID = "여기에_와이파이_이름"                   # ★ 화면에 안내�
 PASSWORD = "여기에_비밀번호"                    # ★ 화면에 안내된 비밀번호로 바꾼다
 
 SIZE = FrameSize.QVGA                           # 화면 크기: QQVGA(작다) < QVGA < VGA < XGA(크다)  → 이 한 줄만 바꾸면 된다 (XGA 는 OV2640 에서만 확인, 느림)
-QUALITY = 60                                    # 화질 (높을수록 선명하고 느리다)
+QUALITY = 60                                    # 화질 0~100 (높을수록 선명하고 느리다. 95 까지 확인, 98 이상은 안 켜질 수 있다)
 
 wlan = network.WLAN(network.STA_IF)
 wlan.active(False)                              # 앞 실행에서 남은 접속 시도를 지우려고
