@@ -48,6 +48,10 @@ else:
                            pixel_format="RGB565_BE", quality=QUALITY)
 if SENSOR == "OV2640":
     cam.set_vflip(True)                         # OV2640 보드는 카메라가 거꾸로 달려 있어서 위아래를 뒤집는다 (OV3660 은 바로 달려 있다)
+if SENSOR == "OV3660":
+    cam.set_wb_mode(3)                          # 흰색이 분홍·보라로 기우는 것을 줄이려고 화이트밸런스를 '사무실'(3)로 맞춘다 (502호 조명에서 확인 필요)
+    for _ in range(5):                          # 설정이 화면에 반영되도록 몇 장 찍고 버린다
+        cam.capture()
 cam.capture()                                   # 첫 장은 밝기가 덜 맞아서 버린다
 print("센서:", SENSOR, "→", "센서 JPEG 직접" if encoder is None else "RGB565 + 보드에서 JPEG 압축",
       "/ 화면 크기:", cam.get_pixel_width(), "x", cam.get_pixel_height())
