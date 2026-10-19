@@ -8,7 +8,7 @@ password = 'daduino12345'
 sender_email = '내_구글_아이디@gmail.com' #구글 ID test@gmail.com 형식
 sender_name = 'prDrone' #보내는 사람 이름
 sender_app_password = '내_구글_앱_비밀번호' #구글 앱 비밀번호
-recipient_email ='munjjac@hanmail.net' #받는 사람 이메일주소
+recipient_email ='받는_사람@gmail.com' #받는 사람 이메일주소
 email_subject ='Test Email' #이메일 제목
 
 def wifi_connect():

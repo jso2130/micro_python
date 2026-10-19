@@ -12,7 +12,7 @@ password = 'daduino12345'
 sender_email = '내_구글_아이디@gmail.com'  # 보내는 사람 이메일
 sender_name = 'prDrone'  # 보내는 사람 이름
 sender_app_password = '내_구글_앱_비밀번호'  # 구글 앱 비밀번호
-recipient_email = 'munjjac@hanmail.net'  # 받는 사람 이메일
+recipient_email = '받는_사람@gmail.com'  # 받는 사람 이메일
 email_subject = 'Sensor Data Report'  # 이메일 제목
 
 # 온습도 센서(DHT11) 설정
