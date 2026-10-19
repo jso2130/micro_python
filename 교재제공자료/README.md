@@ -6,11 +6,9 @@
 | `라이브러리/ble_simple_peripheral.py`, `ble_advertising.py` | 블루투스 코드가 불러 쓰는 파일 두 개 — 토니에서 보드로 올린다 | 109쪽 코드의 import |
 | `../d16_블루투스/3-1.블루투스통신데이터수신_1.py` | 교재 3-1 블루투스 수신 코드 (이름 `pyD_1234`) | 109~110쪽 |
 
-## 굽기 순서 (교재 44~48쪽)
-1. 프로펠러를 빼고 배터리는 연결하지 않는다. 토니의 [도구] → [옵션] → [인터프리터] → **Install or update MicroPython (esptool)**.
-2. 보드의 **KEY 를 누른 채 RST 를 한 번 눌렀다 떼고 KEY 를 뗀다** (부트로더 모드).
-3. 칩 `ESP32-S3`, 파일 `교재제공자료/펌웨어/pyDrone.bin` 을 고르고 설치한다 → `Wrote 1503632 bytes … Hash of data verified.`
-4. **RST 를 한 번** 누르고 토니를 다시 연결한다 → 쉘에 `01Studio PYDRONE-ESP32-S3P`.
-
-같은 일을 명령 한 줄로도 할 수 있다 (포트 이름은 컴퓨터마다 다르다):
-`python -m esptool --port <포트> --baud 460800 write-flash --flash-mode dio --flash-size 8MB 0x0 pyDrone.bin`
+## 펌웨어 설치 순서 (교재 44~48쪽, 토니 사용)
+1. 프로펠러를 빼고 배터리는 연결하지 않는다. 토니 [도구] → [옵션] → **인터프리터** 탭 → 오른쪽 아래 **Install or update MicroPython (esptool)** 을 누른다.
+2. 보드의 **RST 와 KEY 를 함께 눌렀다가 RST 를 먼저, KEY 를 나중에 뗀다** (부트모드).
+3. 설치 창에서 **Target port** `USB JTAG/serial debug unit`, **MicroPython family** `ESP32-S3`, **≡ → Select local MicroPython image…** 로 `펌웨어/pyDrone.bin` 을 고른다.
+4. variant `<local file>` · version `pyDrone.bin` 을 확인하고 **[설치]** → `Done!` 이 나오면 **[닫기]**.
+5. 보드의 **RST** 를 한 번 누른다. 토니 **오른쪽 아래에서 `MicroPython (ESP32) · Espressif Device @ 내 포트`** 를 선택하고 **STOP** 을 한 번 누른다 → 쉘에 `01Studio PYDRONE-ESP32-S3P` 와 `>>>`.
