@@ -1,5 +1,5 @@
 """BLE 로 받은 바이트를 그대로 쉘에 찍기
-미확인: 광고 이름이 폰에 보이는 모습, 쉘의 bytes 모양(직접 확인)"""
+폰이 보낸 값이 쉘에 그대로 나온다"""
 import bluetooth, ble_simple_peripheral
 
 NAME = "pyD_00"                      # ★ 내 번호로
